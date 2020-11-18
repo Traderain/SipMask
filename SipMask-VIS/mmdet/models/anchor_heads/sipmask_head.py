@@ -48,7 +48,7 @@ class FeatureAlign(nn.Module):
         self.norm = nn.GroupNorm(32, in_channels)
 
     def init_weights(self, bias_value=0):
-        torch.nn.init.normal_(self.conv_offset.weight, std=0.0)
+        torch.nn.init.normal_(self.conv_offset.weight, std=1e-3)
         torch.nn.init.normal_(self.conv_adaption.weight, std=0.01)
 
     def forward(self, x, shape):
@@ -595,7 +595,9 @@ class SipMaskHead(nn.Module):
             ]
             feat_mask_list = feat_masks[img_id]
             track_feat_list = track_feats[img_id]
-            is_first = img_metas[img_id]['is_first']
+            is_first = True
+            if 'is_first' in img_metas[img_id]:
+                is_first = img_metas[img_id]['is_first']
 
             img_shape = img_metas[img_id]['img_shape']
             ori_shape = img_metas[img_id]['ori_shape']
