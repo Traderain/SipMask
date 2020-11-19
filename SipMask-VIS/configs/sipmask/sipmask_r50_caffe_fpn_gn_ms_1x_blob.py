@@ -1,3 +1,7 @@
+import os.path
+import os
+from os import path
+
 # model settings
 model = dict(
     type='SipMask',
@@ -21,7 +25,7 @@ model = dict(
         relu_before_extra_convs=True),
     bbox_head=dict(
         type='SipMaskHead',
-        num_classes=41,
+        num_classes=2,
         in_channels=256,
         stacked_convs=3,
         feat_channels=256,
@@ -56,7 +60,7 @@ test_cfg = dict(
     max_per_img=10)
 # dataset settings
 dataset_type = 'CocoDataset'
-data_root = './dateset/blob'
+data_root = os.path.normpath(os.path.join(os.getcwd(), 'dataset\\blob\\data\\'))
 img_norm_cfg = dict(
     mean=[102.9801, 115.9465, 122.7717], std=[1.0, 1.0, 1.0], to_rgb=False)
 data = dict(
@@ -64,37 +68,36 @@ data = dict(
     workers_per_gpu=2,
     train=dict(
         type=dataset_type,
-        ann_file=data_root + 'data/annotations/train.json',
-        img_prefix=data_root + 'data/train/JPEGImages',
-        img_scale=[(649, 360), (960, 480)],
+        ann_file = os.path.normpath(os.path.join(data_root, 'train\\coco_annotations.json')),
+        img_prefix= os.path.normpath(os.path.join(data_root, 'train\\')),
+        img_scale=(1200, 1200),
         img_norm_cfg=img_norm_cfg,
         size_divisor=32,
         flip_ratio=0.5,
-        with_mask=True,
-        with_crowd=True,
-        with_label=True,
-        with_track=True),
+        with_mask=False,
+        with_crowd=False,
+        with_label=True),
     val=dict(
         type=dataset_type,
-        ann_file=data_root + 'data/nnotations/valid.json',
-        img_prefix=data_root + 'data/valid/JPEGImages',
-        img_scale=(640, 360),
-        img_norm_cfg=img_norm_cfg,
-        size_divisor=32,
-        flip_ratio=0,
-        with_mask=True,
-        with_crowd=True,
-        with_label=True),
-    test=dict(
-        type=dataset_type,
-        ann_file=data_root + 'data/annotations/valid.json',
-        img_prefix=data_root + 'data/valid/JPEGImages',
-        img_scale=(640, 360),
+        ann_file=os.path.normpath(os.path.join(data_root, 'valid\\coco_annotations.json')),
+        img_prefix= os.path.normpath(os.path.join(data_root, 'valid\\')),
+        img_scale=(1200, 1200),
         img_norm_cfg=img_norm_cfg,
         size_divisor=32,
         flip_ratio=0,
         with_mask=False,
-        with_label=False,
+        with_crowd=False,
+        with_label=True),
+    test=dict(
+        type=dataset_type,
+        ann_file=os.path.normpath(os.path.join(data_root, 'test\\coco_annotations.json')),
+        img_prefix=os.path.normpath(os.path.join(data_root, 'test\\')),
+        img_scale=(1200, 1200),
+        img_norm_cfg=img_norm_cfg,
+        size_divisor=32,
+        flip_ratio=0,
+        with_mask=False,
+        with_label=True,
         test_mode=True))
 
 # optimizer
@@ -123,10 +126,10 @@ log_config = dict(
 # yapf:enable
 # runtime settings
 total_epochs = 12
-device_ids = range(8)
-dist_params = dict(backend='nccl')
+device_ids = [0]
+#dist_params = dict(backend='nccl')
 log_level = 'INFO'
-work_dir = './work_dirs/sipmask_r50_fpn_ms_1x'
-load_from = './../SipMask-mmdetection/work_dirs/sipmask_r50_caffe_ms_2x.pth'
+work_dir = os.path.normpath(os.path.join(os.getcwd(), 'dataset\\blob\\result\\'))
+load_from = None
 resume_from = None
 workflow = [('train', 1)]

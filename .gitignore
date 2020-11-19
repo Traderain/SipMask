@@ -114,3 +114,4 @@ work_dirs/
 
 # Pytorch
 *.pth
+SipMask-VIS/dataset
